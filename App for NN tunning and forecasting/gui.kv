@@ -1,0 +1,649 @@
+MainWindow: # Hlavni trida -> definovana ve skriptu main.py, hlavni okno
+    id: main_window # id-identita okna
+    orientation: 'vertical'
+    Label: # pole s textem
+        size_hint_y: 0.1 # relativni velikost( plna velikost 1) vuci ostatnim prvkum v podtride Mainwindow
+        # v Mainwindow je jen Label a Boxlayout. Pokud Label i Boxlayour maji size_hint_y: 1, pak pul okna je vyplneno Label a pul okna BoxLayoutem
+        markup: True
+        text: '[size=32px][color=#0398ff]Tunning tool[/color][sub]for[/sub] [i][b]Prediction[/b][/i][/size]'
+
+    BoxLayout: # Okno
+        BoxLayout: # v Okne dalsi okno
+
+            ScreenManager: # Okno se schopnosti menit uvnitr sebe sama okna(screen)
+                id: SM_graph
+                Screen:
+                    name: 'Graph_screen'
+                    BoxLayout:
+
+                        Accordion: # Okno s prepinaci listou - v GUI Info a Graph
+                            id: acc
+
+                            orientation: 'vertical'
+                            AccordionItem:
+                                id: graph_accordion
+
+                                on_collapse: root.cg() # funkce on_x naznacuje ze pri urcite cinnosti se neco spusti
+                                # V tomto pripade se po kliknuti na Listu Graph spusti funkce cg() v main.py
+                                on_collapse: detection_.disabled=False # a zaroven se zprovozni tlacitko Detection
+
+                                title: 'Graph'
+                                BoxLayout:
+                                    orientation: 'vertical'
+                                    id: graph_window
+                            AccordionItem:
+                                id: info
+                                title: 'Info'
+
+                                BoxLayout:
+                                    orientation: 'vertical'
+                                    GridLayout:
+                                        size_hint_y: 0.5
+                                        cols: 2
+                                        Label:
+                                            text:'Finished:'
+                                        Label:
+                                            id: finished
+                                            text: '-'
+                                        Label:
+                                            text:'Calculation Time:'
+                                        Label:
+                                            id: calcul_time
+                                            text:'-'
+                                        Label:
+                                            text: 'Jacobian (HONU): '
+                                        Label:
+                                            id: jacobian_calcul
+                                            text: '-'
+                                        Label:
+                                            text: 'Jacobian calcul. time:: '
+                                        Label:
+                                            id: jacobian_calcul_time
+                                            text: '-'
+                                    BoxLayout:
+
+
+
+            Splitter: # Okno ktere ma schopnost menit pomer vice oken
+                id: splitter
+                #max_size: gui.width/1.5
+                on_size: root.add_action_bar() # vznik listy Matplotlibu (lupa, domecek atd..)
+                min_size: 45
+                strip_size: '7pt'
+                BoxLayout:
+                    orientation: 'vertical'
+
+                    BoxLayout: # okno s tlacitky, ktere meni screen uvnitr ScreenManageru
+                        size_hint_y: 0.1
+                        Button: # Tlacitko
+                            text: "Energo"
+                            on_press: SM_menu.current='tune_tool_menu'
+
+                        Button:
+                            text: "Free"
+                            on_press: SM_menu.current='free_mode_menu'
+                        Button:
+                            id: detection_
+                            disabled: True
+                            text: "Detection"
+                            on_press: SM_menu.current='detection_mode_menu'
+
+
+                    ScreenManager:
+                        id: SM_menu
+                        Screen:
+                            name: 'tune_tool_menu'
+                            BoxLayout:
+
+                                orientation: 'vertical'
+                                BoxLayout:
+
+                                    padding: 2
+                                    size_hint_y:0.07
+                                    Button:
+                                        id: prediction_button
+                                        disabled: True
+                                        text: "Prediction"
+                                        background_color: 0,0,1,1
+                                        on_press: SM_tune.current='prediction_settings'
+
+                                    Button:
+                                        id: data_button
+                                        disabled: True
+                                        text: "Data"
+                                        background_color: 0,0,1,1
+                                        on_press: SM_tune.current='data_settings'
+
+                                ScreenManager:
+                                    id: SM_tune
+                                    Screen:
+                                        name: 'prediction_settings'
+                                        BoxLayout:
+                                            orientation: 'vertical'
+                                            GridLayout:
+                                                cols:2
+                                                size_hint_y: 0.5
+                                                padding: 3
+                                                Label:
+                                                    text: 'Neural model'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                Spinner:
+                                                    id: neural_type
+                                                    text: 'LNU'
+                                                    values: ('LNU', 'QNU', 'CNU', 'MLP')
+                                                Label:
+                                                    text: 'Learning algorithm'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                Spinner:
+                                                    id: neural_method
+                                                    text: 'CGD'
+                                                    values: ('CGD', 'LM', 'GD','NGD')
+                                                Label:
+                                                    text: 'Neurons(MLP)'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                TextInput:
+                                                    id: number_nodes
+                                                    text: '3'
+                                                Label:
+                                                    text: 'Learning rate'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                TextInput:
+                                                    id: number_mu
+                                                    text: '2'
+                                                Label:
+                                                    text: 'Predicion(4/hour)'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                TextInput:
+                                                    id: number_prediction
+                                                    text: '16'
+                                                Label:
+                                                    text: 'Learn. Window(days)'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                TextInput:
+                                                    id: number_win
+                                                    text: '7'
+
+                                                Label:
+                                                    text: 'Re-Learn every(x days)'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+
+                                                TextInput:
+                                                    id: number_relearn_every
+                                                    text: '1'
+                                                Label:
+                                                    text: 'Pre-Learn epochs'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+
+                                                TextInput:
+                                                    id: number_epoch1
+                                                    text: '30'
+                                                Label:
+                                                    text: 'Re-Learn epochs'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+
+                                                TextInput:
+                                                    id: number_epoch2
+                                                    text: '30'
+                                                Label:
+                                                    text: 'Neural Input'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                Label:
+                                                Label:
+                                                    text: 'En.data(Length,gap)'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                BoxLayout:
+                                                    TextInput:
+                                                        id: dynamic_samples_en
+                                                        text: '8'
+                                                    TextInput:
+                                                        id: gap_in_dynamic_samples_en
+                                                        text: '3'
+                                                Label:
+                                                    text: 'Days(Length,gap)'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                BoxLayout:
+                                                    TextInput:
+                                                        id: dynamic_samples_days
+                                                        text: '5'
+                                                    TextInput:
+                                                        id: gap_in_dynamic_samples_days
+                                                        text: '96'
+                                                Label:
+                                                    text: 'Time(Length,gap)'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                BoxLayout:
+                                                    TextInput:
+                                                        id: dynamic_samples_time
+                                                        text: '1'
+                                                    TextInput:
+                                                        id: gap_in_dynamic_samples_time
+                                                        text: '1'
+                                                Button:
+                                                    id: run_button
+                                                    text: 'Run'
+                                                    on_press: root.get_params_and_start()
+                                                    on_press: show_button_another.disabled = False
+                                                    disabled: True
+                                                Button:
+                                                    id: show_button
+                                                    text: 'Show'
+                                                    on_press: root.set_neural_data()
+                                                    disabled: True
+
+
+
+
+                                    Screen:
+                                        name: 'data_settings'
+                                        BoxLayout:
+                                            orientation: 'vertical'
+                                            GridLayout: # okno, ktere v sobe radi prvky do sloupcu
+                                                cols: 2
+                                                padding: 2
+                                                Label:
+                                                    text: 'Data type(0-11)'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                BoxLayout:
+                                                    Slider
+                                                        min: 0
+                                                        step: 1
+                                                        value: 0
+                                                        max: 10
+                                                        id: data_type
+                                                    TextInput:
+                                                        on_text: root.set_data()
+                                                        size_hint_x: 0.4
+                                                        text: str(round(data_type.value,0))
+                                                Label:
+                                                    text: 'Find day'
+                                                    halign: 'left' # zarovnani
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                BoxLayout:
+                                                    TextInput:
+                                                        id: what_day
+                                                        text: '01.01.2016'
+                                                    Button:
+                                                        size_hint_x: 0.9
+                                                        id: wh_day
+                                                        text: 'Find out'
+                                                        on_press: root.which_day()
+                                                Label:
+                                                    text: 'Data from day'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                BoxLayout:
+                                                    TextInput:
+                                                        text: '3'
+                                                        id: sda
+                                                    TextInput:
+                                                        id:sdb
+                                                        text: '60'
+                                                Label:
+                                                    text: 'Coarse graining'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                Switch:
+                                                    id: cgrain_on_off
+                                                Label:
+                                                    text: 'Sample Radius'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                BoxLayout:
+                                                    TextInput:
+                                                        text: '4'
+                                                        id: radius
+
+
+                                                Button:
+                                                    id: refresh_button
+                                                    text: 'refresh'
+                                                    on_press: root.set_data()
+                                                    disabled: True
+
+                                            BoxLayout:
+
+
+                        Screen:
+                            name: 'free_mode_menu'
+                            BoxLayout:
+                                orientation: 'vertical'
+                                BoxLayout:
+                                    size_hint_y: 0.1
+                                    TextInput:
+                                        text: 'text_code.txt'
+                                        id: code_text
+                                    Button:
+                                        text: 'Save as'
+                                        background_color: 1,0,0,1 # R,G,B,Alpha - Alpha - viditelnost
+                                        on_press: root.save_as()
+                                    Button:
+                                        text: 'Load'
+                                        background_color: 0,0,1,1
+
+                                        on_press: root.load_code()
+
+                                CodeInput: # okno umoznujici skriptovaní
+                                    font_size: 12
+                                    text: '#X - vector/matrix of length = L or(L,num of inputs)\n#Bias in X is automatic in program\n#yr - vector of lenght - L\n#ALWAYS must be defined these params\n#X,yr,nodes,p,relearn_every,epoch1,epoch2,learning_rate,win\nimport numpy as np\nimport neural_network as nn\np=10\nnodes=5  #\nlearning_rate = 0.001\nepoch1=30\nepoch2=30\nwin=100\nrelearn_every = 20\nL=1000\nX = np.random.rand((L))\nyr=X\nX=nn.force_recurrent_gap(X,10,1,0)\nU1=np.zeros(L)\nU2=np.zeros(L)\nX = nn.stack_input(X,U1)\nX = nn.stack_input(X,U2)'
+
+                                    id: code_it # identita okna. Pristup k textu v main.py -> self.ids.code_it.text
+                                BoxLayout:
+                                    size_hint_y: 0.1
+                                    Button:
+                                        id: show_code_button
+                                        text: 'Show yr'
+                                        on_press: root.code_execution_yr()
+                                        disabled: True
+                                    Button:
+                                        text: 'Run'
+                                        on_press: root.thread_code_execution()
+                                        on_press: show_button_code_another.disabled = False
+                                        disabled: True
+                                        id: code_button
+                                        on_press: save_code_button.disabled=False
+                                        on_press: result_code_button.disabled=False
+
+                                BoxLayout:
+                                    size_hint_y: 0.1
+                                    #Button:
+                                    #    id: show_code_button
+                                    #    text: 'Show data'
+                                    #    on_press: root.set_data_code()
+                                    #    disabled: True
+
+                                    Button
+                                        id: result_code_button
+                                        text: 'show result'
+                                        on_press: root.set_neural_data_code()
+                                        disabled: True
+
+                                    Button
+                                        size_hint_x:0.5
+                                        background_color: 0,0,1,6
+                                        id: save_code_button
+                                        text: 'save yn'
+                                        on_press: root.save_yn()
+                                        disabled: True
+
+                        Screen:
+                            name: 'detection_mode_menu'
+                            BoxLayout:
+                                orientation: 'vertical'
+                                BoxLayout:
+                                    size_hint_y: 0.07
+                                    Button:
+                                        text: 'Output Error'
+                                        background_color: 0,0,1,1
+                                        on_press: SM_error.current='error_output_setting'
+                                    Button:
+                                        text: 'Learning Error'
+                                        background_color: 0,0,1,1
+                                        on_press: SM_error.current='error_learning'
+
+                                ScreenManager:
+                                    id: SM_error
+                                    Screen:
+                                        name: 'error_output_setting'
+                                        BoxLayout:
+                                            orientation: 'vertical'
+                                            Label:
+                                                size_hint_y: 0.1
+                                                text: "Error evaluation"
+                                            BoxLayout:
+                                                size_hint_y: 0.1
+                                                Label:
+                                                    text: 'Number of previous errors'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                TextInput:
+                                                    id: error_memory
+                                                    size_hint_x:0.5
+                                                    text: '3'
+
+                                            BoxLayout:
+                                                size_hint_y: 0.1
+                                                Label:
+                                                    text: 'Error percentage'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                TextInput:
+                                                    id: error_percentage_border
+                                                    size_hint_x:0.5
+                                                    text: '20'
+
+
+                                            Label:
+                                                size_hint_y: 0.1
+                                                text: 'Compared to'
+
+                                            GridLayout:
+                                                size_hint_y: 0.22
+                                                cols:3
+                                                Label:
+                                                    text: 'Value'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                TextInput:
+                                                    id: value_defined
+                                                    size_hint_x:0.5
+                                                    text: '500'
+
+                                                CheckBox:
+                                                    id: val_def
+                                                    group: 'error check'
+                                                    active: True
+                                                Label:
+                                                    text: 'Average Value'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                BoxLayout:
+
+                                                CheckBox:
+                                                    id: val_aver
+                                                    group: 'error check'
+                                            Label:
+                                                text: 'Include'
+                                                size_hint_y: 0.1
+                                            GridLayout:
+                                                size_hint_y: 0.22
+                                                cols:2
+                                                padding: 3
+                                                Label:
+                                                    text: 'RMSE-MAE'
+
+                                                Label:
+                                                    text: 'Error %'
+                                                CheckBox:
+                                                    id: rmse_mae_check
+                                                CheckBox:
+                                                    id: error_p_check
+                                                    active: True
+
+                                            BoxLayout:
+                                                size_hint_y:0.1
+                                                Label:
+                                                    text: 'Show unusual states'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                Switch:
+                                                    id: eval_
+
+
+
+
+
+                                            Button:
+                                                size_hint_y: 0.15
+                                                text: 'Run'
+                                                on_press: root.save_data_to_show_error()
+                                    Screen:
+                                        name: 'error_learning'
+                                        BoxLayout:
+                                            orientation: 'vertical'
+                                            BoxLayout:
+                                                size_hint_y: 0.15
+                                                Label:
+                                                    text: 'Order of Learning Entropy'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                TextInput:
+                                                    id: OLES
+                                                    size_hint_x:0.5
+                                                    text: '9'#'4'
+                                            GridLayout:
+                                                size_hint_y: 0.3
+                                                cols: 2
+                                                padding: 3
+                                                Label:
+                                                    text: 'Detection Sensitivity(DS)'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                TextInput:
+                                                    font_size: 12
+                                                    size_hint_x:0.5
+                                                    text: '100 50 30 10 5 0.1'
+                                                    id: alfas
+                                                Label:
+                                                    text: 'Multiply (DS) by'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                TextInput:
+                                                    id: multiply
+                                                    size_hint_x:0.5
+                                                    text: '5'#'0.01'
+                                            BoxLayout:
+                                                size_hint_y: 0.15
+                                                Label:
+                                                    text: 'Remeber past Weights'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                TextInput:
+                                                    size_hint_x:0.5
+                                                    text: '30' #15
+                                                    id: memory
+
+                                            GridLayout:
+                                                size_hint_y: 0.5
+                                                cols: 2
+                                                Label:
+                                                    text: ' Break pretraining'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                Switch:
+                                                    id: break_pretrain_s
+
+                                                Label:
+                                                    text: 'Break intervals'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                TextInput:
+                                                    id: break_intervals
+                                                    text: '2 5'
+                                                    font_size: 11
+                                                Button:
+                                                    text: 'Detection intervals'
+                                                    on_press: root.set_recommended_intervals()
+                                                TextInput:
+                                                    id: tolerance
+                                                    text: '96 96'
+
+
+                                            BoxLayout:
+                                                size_hint_y: 0.15
+                                                Label:
+                                                    text: 'Allow Learning Entropy'
+                                                    halign: 'left'
+                                                    valign: 'middle'
+                                                    text_size: self.size
+                                                Switch:
+                                                    id: entr_allow
+                                                    active: True
+
+                                            Label:
+                                                size_hint_y: 0.13
+                                                text: 'Recalculate'
+                                                color: 1,1,0,1
+
+
+
+                                            GridLayout:
+                                                cols: 2
+                                                size_hint_y: 0.3
+
+                                                Button:
+                                                    text: 'Energo'
+                                                    on_press: root.get_params_and_start()
+                                                    on_release: show_button_another.disabled=False
+                                                Button:
+                                                    text: 'CODE'
+                                                    on_press: root.thread_code_execution()
+                                                    on_release: show_button_code_another.disabled=False
+
+
+                                                Button:
+                                                    id: show_button_another
+                                                    text: 'Show'
+                                                    on_press: root.set_neural_data()
+                                                    disabled: True
+                                                Button
+                                                    id: show_button_code_another
+                                                    text: 'Show'
+                                                    on_press: root.set_neural_data_code()
+                                                    disabled: True
+                                            BoxLayout
+                                                size_hint_y:0.1
+
+                                            Button:
+                                                text: 'Run'
+                                                size_hint_y: 0.2
+                                                on_press: root.save_data_to_show_entropy()
+
+                    Button:
+                        size_hint_y:0.05
+                        background_color: 1,0,0,1
+                        text: 'Cancel calculation - HOLD'
+                        on_press: root.cancel = True # Pri stlaceni se promena cancel nastavi na True
+                        on_release: root.cancel = False # po uvolneni tlacitka se cancel nastavi zpatky na False

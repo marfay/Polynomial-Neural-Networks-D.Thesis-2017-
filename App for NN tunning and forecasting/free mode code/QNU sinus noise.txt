@@ -1,0 +1,31 @@
+#X - vector/matrix of length = L or(L,num of inputs)
+#Bias in X is automatic in program
+#yr - vector of lenght - L
+#ALWAYS must be defined these params
+#X,yr,nodes,p,relearn_every,epoch1,epoch2,learning_rate,win
+import numpy as np
+import neural_network as nn
+p=100
+nodes=5  #
+learning_rate = 0.01
+epoch1=30
+epoch2=5
+win=300
+relearn_every = 20
+
+# Generate Data
+N=2500
+noise = np.random.rand(N)
+t = np.linspace(0,45,N)
+yr =10*np.sin(2*np.pi*t*0.4)+10*np.sin(2*np.pi*t*0.3) + noise
+
+#yr = nn.coarse_grain(yr,10) # 3=radius of samples around value
+
+## yr, X - input vector
+X = yr # I will use yr as input vector
+# normalize just X matrix as you wish
+X=nn.force_recurrent_gap(X,10,10,0)/10
+# final input vector(matrix(N,10)) to neural network
+#[y[k]   y[k-5] y[k-10].....y[k-5*10]]  ->> X(k)
+#[y[k-1] y[k-6] y[k-11].....y[k-5*10-1]] ->> X(k-1)
+# and so on

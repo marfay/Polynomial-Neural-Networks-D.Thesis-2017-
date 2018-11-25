@@ -1,0 +1,52 @@
+#X - vector/matrix of length = L or(L,num of inputs)
+#Bias in X is automatic in program
+#yr - vector of lenght - L
+#ALWAYS must be defined these params
+#X,yr,nodes,p,relearn_every,epoch1,epoch2,learning_rate,win
+import numpy as np
+import neural_network as nn
+samples = 96 # day
+p=6
+nodes=5  #
+learning_rate = 0.01
+epoch1=30
+epoch2=30
+win=7*samples
+relearn_every = samples*1
+
+# Energo Data
+X = np.loadtxt('ENE_data.txt')
+Time = np.loadtxt('time.txt')
+Days = np.loadtxt('log_days.txt')
+Weather = np.loadtxt('weather.txt')
+# Modify data
+building = 10 #(0-11, 11 artifical building)
+day1=3*samples
+day2=120*samples
+X = X[day1:day2,building]
+T = Time[day1:day2]
+D = Days[day1:day2]
+W = Weather[day1:day2]
+#Filter dat
+X = nn.coarse_grain(X,6) # 5=radius of samples around value
+
+#Create input and output data
+#yr=X # I will use yr also in input vector
+yr=X
+# normalize just X matrix as you wish
+X =X/np.amax(X)
+W = W/np.amax(W)
+X=nn.force_recurrent_gap(X,8,3,0) # 12 delayed values by gap 3
+T=nn.force_recurrent_gap(T,1,1,0) # nothing
+D=nn.force_recurrent_gap(D,1,1,0) # nothing
+#W=nn.force_recurrent_gap(W,5,96,0) # temperature - no influence
+# Put it together
+X = nn.stack_input(X,D)
+X = nn.stack_input(X,T)
+#X = nn.stack_input(X,W)
+# POSTUP: 
+#NPE = 10
+#EP = 20
+#Val =800
+# zrusit intervaly 7166 7372 7716 7930  
+
