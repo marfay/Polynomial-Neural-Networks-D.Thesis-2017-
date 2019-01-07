@@ -1164,6 +1164,6 @@ def translate_image(img):
 # HOW TO DO 
 #weights = som_it(300,n,m,(n+m)/2,0.5,50,250,I,weights)
 #for ep in range(300):
-#    weights=som_one_shit(ep,n,m,(n+m)/2,0.5,100,100,I,weights)
+#    weights=som_it(ep,n,m,(n+m)/2,0.5,100,100,I,weights)
 #imshow(weights)
 #show()
